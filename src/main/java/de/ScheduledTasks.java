@@ -13,9 +13,8 @@ public class ScheduledTasks {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    //60000 => 1 Minute
-
-    @Scheduled(fixedRate = 60000)
+    // Alle 15 Minuten
+    @Scheduled(fixedRate = 900000)
     public void reportCurrentTime() throws Exception {
         String delays = FlightChecker.flightSearch(DELAY_TIME, false);
         versendeEMail(delays);

@@ -30,35 +30,11 @@ public class FlightChecker {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    final private static String MAIN_URL = "http://flightapp.creativeapis.com/api/Services/JSON/current_departures_for_airport.php?data=";
+    public static String flightSearch(int delay, boolean getJson) {
 
-    final private static String[] AIRPORTS = {
-            MAIN_URL + "zvoOWl4vxF1gr3M6rwe475iptYMZjzdCfRw5M5iPpWWriyp%2FThgm59N1JYDunUYz%0A", // CGN = Köln
-            MAIN_URL + "p8CJ%2BquXhdGjobp39tmTkMwwkBjZgfiaauvbgjpmcogTuEBXmzGnoP%2F%2FjEqF0r5C%0A", // DUS = Düsseldorf
-            MAIN_URL + "Ay6raj8mqG7QZhJTxq%2BuwhSDPLocfnr4URml%2BF3gYia8pEJ43I4fj69x9ZO5TZiy%0A", // HAM = Hamburg*/
-            MAIN_URL + "0TZxxiB%2BLnqIrlV%2FZQITB0XWPbrzonfsoR5dpy9q5Y92zeLa32f3%2B7QPgCjQgmM%2F%0A", // TXL = Berlin
-            MAIN_URL + "W9o0P0lIPKKCjq0xdXFlMc%2BtMi3OE3l1Lgi%2BAiiavqaVAbXGVDRtdPlcJu8qHgMA%0A", // FKB = Karlsruhe / Baden-Baden
-            MAIN_URL + "ValU97vvoRqjA8iXgV5EOuIJZPNu6QOnFKPyZXpoYeOrvstgYK3pIGTxi2yFj5Pk%0A", // STR = Stuttgart
-            MAIN_URL + "SYI3weE%2BVQBEsMMMbU0qIu6t185f%2BQ2KCKuCIAsizxzPafO5nEglKzf8sOmbUrxj%0A", // SCN = Saarbrücken
-/*            MAIN_URL + "", // X = Dortmund
-            MAIN_URL + "", // X = Düsseldorfd Weeze
-            MAIN_URL + "", // X = Leipzip/Halle
-            MAIN_URL + "", // X = Dresden
-            MAIN_URL + "", // X = Saarbrücken
-            MAIN_URL + "", // X = Paderborn/Lippstadt
-            MAIN_URL + "", // X = Münster/Osnabrück
-            MAIN_URL + "", // X = Hannover
-            MAIN_URL + "", // X = Bremen
-            MAIN_URL + "", // X = Sylt
-            MAIN_URL + "" // X = Usedom (Heringsdorf)*/
-    };
-
-
-    public static String flightSearch(int delay, boolean getJson){
-
-        try{
+        try {
             return getJson(delay, getJson);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error {}", e.getMessage());
             return "";
         }
@@ -72,55 +48,52 @@ public class FlightChecker {
 
         ArrayList<String> flights = new ArrayList<>();
 
-        for (String airport : AIRPORTS) {
-            InputStream inputStream = new URL(airport).openStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        InputStream inputStream = new URL(EUROWINGS_FLIGHTS).openStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            // Datei als JSON-Objekt einlesen
-            JsonObject json = gson.fromJson(reader, JsonObject.class);
-            JsonArray data = json.get("data").getAsJsonArray();
+        // Datei als JSON-Objekt einlesen
+        JsonObject json = gson.fromJson(reader, JsonObject.class);
+        JsonArray data = json.get("data").getAsJsonArray();
 
+        for (JsonElement jsonElement : data) {
+            JsonObject jO = (JsonObject) jsonElement;
+            int ddelay = jO.get("DDELAY").getAsInt();
 
-            for (JsonElement jsonElement : data) {
-                JsonObject jO = (JsonObject) jsonElement;
-                int ddelay = jO.get("DDELAY").getAsInt();
+            if (ddelay > minDelay) {
+                String fc = cleanString(jO.get("FC").toString());
+                String daid = cleanString(jO.get("DAID").toString());
+                String aaid = cleanString(jO.get("AAID").toString());
 
-                if (ddelay > minDelay) {
-                    String fc = cleanString(jO.get("FC").toString());
-                    String daid = cleanString(jO.get("DAID").toString());
-                    String aaid = cleanString(jO.get("AAID").toString());
+                JsonObjectBuilder flight = Json.createObjectBuilder();
+                flight.add("FLUG", fc);
+                flight.add("START", daid);
+                flight.add("ENDE", aaid);
+                flight.add("DELAY", ddelay);
 
-                    JsonObjectBuilder flight = Json.createObjectBuilder();
-                    flight.add("FLUG", fc);
-                    flight.add("START", daid);
-                    flight.add("ENDE", aaid);
-                    flight.add("DELAY", ddelay);
+                flights.add("FLUG " + fc + " von " + daid + " nach " + aaid + " " + ddelay + " Minuten \n");
 
-                    flights.add("FLUG " + fc + " von " + daid + " nach " + aaid + " " + ddelay + " Minuten \n");
+                arrb.add(flight);
 
-                    arrb.add(flight);
-
-                }
             }
         }
 
         builder.add("data", arrb);
 
-        if(getJson){
+        if (getJson) {
             return builder.build().toString();
         } else {
-            return  flights.toString();
+            return flights.toString();
         }
     }
 
-    private static String cleanString(String input){
+    private static String cleanString(String input) {
         return input.replace("\"", "").replace("[", "").replace("]", "");
     }
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     public static void versendeEMail(String inhalt) {
-        try{
+        try {
             Properties props = System.getProperties();
 
             props.put("mail.transport.protocol", "smtp");
@@ -141,7 +114,7 @@ public class FlightChecker {
             transport.sendMessage(message, message.getAllRecipients());
 
             Transport.send(message);
-        } catch (Exception e){
+        } catch (Exception e) {
             //ToDo: Fehler-Handling
         }
     }
