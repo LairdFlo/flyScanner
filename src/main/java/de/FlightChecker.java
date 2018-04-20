@@ -19,10 +19,14 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 
-public class FlightCheck {
+import static de.Konfig.*;
+
+public class FlightChecker {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
@@ -50,13 +54,13 @@ public class FlightCheck {
     };
 
 
-    public static String flightSearch(int delay, boolean getJson) throws Exception {
+    public static String flightSearch(int delay, boolean getJson){
 
         try{
-            return getJson(delay, false);
+            return getJson(delay, getJson);
         } catch (Exception e){
             log.error("Error {}", e.getMessage());
-            throw e;
+            return "";
         }
     }
 
@@ -92,7 +96,7 @@ public class FlightCheck {
                     flight.add("ENDE", aaid);
                     flight.add("DELAY", ddelay);
 
-                    flights.add("FLUG " + fc + " von " + daid + " nach " + aaid + ": " + ddelay + " Minuten \n");
+                    flights.add("FLUG " + fc + " von " + daid + " nach " + aaid + " " + ddelay + " Minuten \n");
 
                     arrb.add(flight);
 
@@ -113,25 +117,32 @@ public class FlightCheck {
         return input.replace("\"", "").replace("[", "").replace("]", "");
     }
 
-    public static void versendeEMail(String inhalt) throws Exception {
-        Properties props = System.getProperties();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.port", 587);
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
+    public static void versendeEMail(String inhalt) {
+        try{
+            Properties props = System.getProperties();
 
-        Session session = Session.getDefaultInstance(props);
-        MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress("Florian.Stolzmann@gmx.de"));
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress("Florian.Stolzmann@gmx.de"));
-        message.setSubject("Test", "ISO-8859-1");
-        message.setText(inhalt, "UTF-8");
+            props.put("mail.transport.protocol", "smtp");
+            props.put("mail.smtp.host", SMTP_HOST);
+            props.put("mail.smtp.port", SMTP_PORT);
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.auth", "true");
 
-        Transport transport = session.getTransport();
-        transport.connect("mail.gmx.net", "Florian.Stolzmann@gmx.de");
-        transport.sendMessage(message, message.getAllRecipients());
+            Session session = Session.getDefaultInstance(props);
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(SMTP_MAIL));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(SMTP_MAIL));
+            message.setSubject("Flugverspaetung: " + dateFormat.format(new Date()), "UTF-8");
+            message.setText(inhalt, "UTF-8");
 
-        Transport.send(message);
+            Transport transport = session.getTransport();
+            transport.connect(SMTP_HOST, SMTP_MAIL, SMTP_PASSWORD);
+            transport.sendMessage(message, message.getAllRecipients());
+
+            Transport.send(message);
+        } catch (Exception e){
+            //ToDo: Fehler-Handling
+        }
     }
 }

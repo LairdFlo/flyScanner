@@ -1,25 +1,24 @@
 package de;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static de.FlightChecker.versendeEMail;
+import static de.Konfig.DELAY_TIME;
 
 @Component
 public class ScheduledTasks {
 
-    private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    //60000 => 1 Minute
 
-    @Scheduled(fixedRate = 000)
+    @Scheduled(fixedRate = 60000)
     public void reportCurrentTime() throws Exception {
-        String delays = FlightCheck.flightSearch(30, false);
-        log.info("The time is now {}", dateFormat.format(new Date()));
-        log.info("Findings {}", delays );
+        String delays = FlightChecker.flightSearch(DELAY_TIME, false);
+        versendeEMail(delays);
+        LOG.info("Email erfolgreich verschickt");
     }
 }

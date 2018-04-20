@@ -10,7 +10,7 @@ public class FlightController {
     
     @RequestMapping(value = "/flightDelay/{delay}", method = RequestMethod.GET)
     public String index(@PathVariable("delay") int delay) throws Exception{
-        return FlightCheck.flightSearch(delay, true);
+        return FlightChecker.flightSearch(delay, true);
     }
     
 }

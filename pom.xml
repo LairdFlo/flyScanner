@@ -12,7 +12,7 @@
     <packaging>war</packaging>
 
     <groupId>de</groupId>
-    <artifactId>flightScan</artifactId>
+    <artifactId>flyScanner</artifactId>
     <version>0.0.1</version>
 
     <properties>
