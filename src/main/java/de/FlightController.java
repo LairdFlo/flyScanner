@@ -5,12 +5,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static de.FlightChecker.*;
+import static de.Utils.getFlightJson;
+
 @RestController
 public class FlightController {
     
     @RequestMapping(value = "/flightDelay/{delay}", method = RequestMethod.GET)
     public String index(@PathVariable("delay") int delay) throws Exception{
-        return FlightChecker.flightSearch(delay, true);
+        return getFlightJson(getDelayFlight(delay));
     }
     
 }
