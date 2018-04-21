@@ -1,6 +1,6 @@
-package de;
+package de.config;
 
-public class Konfig {
+public class Configuration {
 
     public static int DELAY_TIME = 180;
 

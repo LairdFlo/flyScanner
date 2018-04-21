@@ -1,8 +1,8 @@
 package de.data;
 
-public class Flug {
+public class Flight {
 
-    public Flug(){
+    public Flight(){
 
     }
 
@@ -106,7 +106,7 @@ public class Flug {
 
     @Override
     public String toString() {
-        return "Flug{" +
+        return "Flight{" +
                 "unicNumber='" + unicNumber + '\'' +
                 ", fc='" + fc + '\'' +
                 ", delay=" + delay +

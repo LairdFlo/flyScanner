@@ -1,15 +1,13 @@
 package de;
 
-import de.data.Flug;
+import de.data.Flight;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static de.FlightChecker.getDelayFlight;
-import static de.FlightChecker.versendeEMail;
-import static de.Konfig.DELAY_TIME;
+import static de.Utils.versendeEMail;
 import static de.Utils.getFlightString;
 
 public class FlightTest {
@@ -30,7 +28,7 @@ public class FlightTest {
 
     @Test
     public void verschickeMail() throws Exception {
-        ArrayList<Flug> flights = new ArrayList<>();
+        ArrayList<Flight> flights = new ArrayList<>();
         flights.add(getBasicFlug());
         flights.add(getBasicFlug());
         flights.add(getBasicFlug());
@@ -38,22 +36,17 @@ public class FlightTest {
         versendeEMail(flightString);
     }
 
-    @Test
-    public void test() throws Exception {
-        String flightString = getFlightString(getDelayFlight(DELAY_TIME));
-        versendeEMail(flightString);    }
-
-    private Flug getBasicFlug(){
-        Flug flug = new Flug();
-        flug.setDelay(250);
-        flug.setSad("");
-        flug.setAad("");
-        flug.setAdd("");
-        flug.setAaid("");
-        flug.setDaid("");
-        flug.setFc("");
-        flug.setSsd("");
-        flug.setUnicNumber("");
-        return flug;
+    private Flight getBasicFlug(){
+        Flight flight = new Flight();
+        flight.setDelay(250);
+        flight.setSad("");
+        flight.setAad("");
+        flight.setAdd("");
+        flight.setAaid("");
+        flight.setDaid("");
+        flight.setFc("");
+        flight.setSsd("");
+        flight.setUnicNumber("");
+        return flight;
     }
 }
