@@ -1,5 +1,7 @@
 package de.data;
 
+import static de.Utils.getFullDate;
+
 public class Flight {
 
     public Flight(){
@@ -110,12 +112,12 @@ public class Flight {
                 "unicNumber='" + unicNumber + '\'' +
                 ", fc='" + fc + '\'' +
                 ", delay=" + delay +
-                ", daid='" + daid + '\'' +
-                ", aaid='" + aaid + '\'' +
-                ", ssd='" + ssd + '\'' +
-                ", add='" + add + '\'' +
-                ", aad='" + aad + '\'' +
-                ", sad='" + sad + '\'' +
+                ", daid='" + getFullDate(daid) + '\'' +
+                ", aaid='" + getFullDate(aaid) + '\'' +
+                ", ssd='" + getFullDate(ssd) + '\'' +
+                ", add='" + getFullDate(add) + '\'' +
+                ", aad='" + getFullDate(aad) + '\'' +
+                ", sad='" + getFullDate(sad) + '\'' +
                 '}';
     }
 }

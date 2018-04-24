@@ -13,6 +13,7 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -32,7 +33,7 @@ public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    public static ArrayList<Flight> getDelayFlight(int minDelay) throws Exception {
+    public static ArrayList<Flight> getDelayFlight(int minDelay) {
 
         try {
 
@@ -64,32 +65,32 @@ public class Utils {
     }
 
     public static void versendeEMail(String inhalt) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        try {
-            Properties props = System.getProperties();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-            props.put("mail.transport.protocol", "smtp");
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.host", SMTP_HOST);
             props.put("mail.smtp.port", SMTP_PORT);
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.auth", "true");
 
-            Session session = Session.getDefaultInstance(props);
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(SMTP_MAIL));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(SMTP_MAIL));
-            message.setSubject("Flugverspaetung: " + dateFormat.format(new Date()), "UTF-8");
-            message.setText(inhalt, "UTF-8");
-            //message.setContent(inhalt, "text/html; charset=utf-8");
+            // Get the Session object.
+            Session session = Session.getInstance(props,
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(SMTP_MAIL_FROM, SMTP_PASSWORD);
+                        }
+                    });
 
-            Transport transport = session.getTransport();
-            transport.connect(SMTP_HOST, SMTP_MAIL, SMTP_PASSWORD);
-            transport.sendMessage(message, message.getAllRecipients());
-
-            Transport.send(message);
-        } catch (Exception e) {
-            //ToDo: Fehler-Handling
-        }
+            try {
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(SMTP_MAIL_FROM));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(SMTP_MAIL_TO));
+                message.setSubject("Flugverspaetung: " + dateFormat.format(new Date()));
+                message.setText(inhalt);
+                Transport.send(message);
+            } catch (Exception e) {
+                log.error("Error {}", e.getMessage());
+            }
     }
 
     public static Flight getFlug(JsonObject jo) {
@@ -135,7 +136,7 @@ public class Utils {
         StringBuilder result = new StringBuilder();
 
         for (Flight flight : flights) {
-            result.append("<br />" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + flight.getSsd() + " | neu: " + flight.getAdd() + ")");
+            result.append("\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + flight.getSsd() + " | neu: " + flight.getAdd() + ")");
         }
 
         return result.toString();
@@ -145,7 +146,10 @@ public class Utils {
         return input.replace("\"", "").replace("[", "").replace("]", "");
     }
 
+    public static String getFullDate(String timeDouble){
+        if(timeDouble == null) return "";
 
-
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        return dateFormat.format(Long.valueOf(timeDouble) * 1000);
+    }
 }

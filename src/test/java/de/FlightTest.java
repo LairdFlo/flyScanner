@@ -3,26 +3,23 @@ package de;
 import de.data.Flight;
 import org.junit.Test;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static de.Utils.versendeEMail;
 import static de.Utils.getFlightString;
 
 public class FlightTest {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     @Test
     public void datumTest() throws Exception {
-        long time = 1524213900;
+        Flight flight = new Flight();
+        flight.setSsd("1524520200");
+        flight.setSad("1524559800");
+        flight.setAdd("1524520200");
+        flight.setAad("1524559800");
 
-        Date date = new Date();
-        date.setTime(time * 1000);
-
-        System.out.println(dateFormat.format(new Date()));
-        System.out.println(dateFormat.format(date));
+        System.out.println(flight.toString());
 
     }
 

@@ -12,7 +12,7 @@ import static de.Utils.getFlightJson;
 public class FlightApi {
     
     @RequestMapping(value = "/flightDelay/{delay}", method = RequestMethod.GET)
-    public String index(@PathVariable("delay") int delay) throws Exception{
+    public String index(@PathVariable("delay") int delay){
         return getFlightJson(getDelayFlight(delay));
     }
     
