@@ -1,7 +1,5 @@
 package de.data;
 
-import static de.Utils.getFullDate;
-
 public class Flight {
 
     public Flight(){
@@ -33,6 +31,8 @@ public class Flight {
 
     //Ankungt Tatsächlich
     private String sad;
+
+    private boolean cgnFlight;
 
     public String getUnicNumber() {
         return unicNumber;
@@ -106,18 +106,62 @@ public class Flight {
         this.sad = sad;
     }
 
+    public boolean isCgnFlight() {
+        return cgnFlight;
+    }
+
+    public void setCgnFlight(boolean cgnFlight) {
+        this.cgnFlight = cgnFlight;
+    }
+
     @Override
     public String toString() {
         return "Flight{" +
                 "unicNumber='" + unicNumber + '\'' +
                 ", fc='" + fc + '\'' +
                 ", delay=" + delay +
-                ", daid='" + getFullDate(daid) + '\'' +
-                ", aaid='" + getFullDate(aaid) + '\'' +
-                ", ssd='" + getFullDate(ssd) + '\'' +
-                ", add='" + getFullDate(add) + '\'' +
-                ", aad='" + getFullDate(aad) + '\'' +
-                ", sad='" + getFullDate(sad) + '\'' +
+                ", daid='" + daid + '\'' +
+                ", aaid='" + aaid + '\'' +
+                ", ssd='" + ssd + '\'' +
+                ", add='" + add + '\'' +
+                ", aad='" + aad + '\'' +
+                ", sad='" + sad + '\'' +
+                ", cgnFlight=" + cgnFlight +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Flight flight = (Flight) o;
+
+        if (delay != flight.delay) return false;
+        if (cgnFlight != flight.cgnFlight) return false;
+        if (unicNumber != null ? !unicNumber.equals(flight.unicNumber) : flight.unicNumber != null) return false;
+        if (fc != null ? !fc.equals(flight.fc) : flight.fc != null) return false;
+        if (daid != null ? !daid.equals(flight.daid) : flight.daid != null) return false;
+        if (aaid != null ? !aaid.equals(flight.aaid) : flight.aaid != null) return false;
+        if (ssd != null ? !ssd.equals(flight.ssd) : flight.ssd != null) return false;
+        if (add != null ? !add.equals(flight.add) : flight.add != null) return false;
+        if (aad != null ? !aad.equals(flight.aad) : flight.aad != null) return false;
+        return sad != null ? sad.equals(flight.sad) : flight.sad == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = unicNumber != null ? unicNumber.hashCode() : 0;
+        result = 31 * result + (fc != null ? fc.hashCode() : 0);
+        result = 31 * result + delay;
+        result = 31 * result + (daid != null ? daid.hashCode() : 0);
+        result = 31 * result + (aaid != null ? aaid.hashCode() : 0);
+        result = 31 * result + (ssd != null ? ssd.hashCode() : 0);
+        result = 31 * result + (add != null ? add.hashCode() : 0);
+        result = 31 * result + (aad != null ? aad.hashCode() : 0);
+        result = 31 * result + (sad != null ? sad.hashCode() : 0);
+        result = 31 * result + (cgnFlight ? 1 : 0);
+        return result;
     }
 }

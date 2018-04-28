@@ -1,9 +1,10 @@
-package de;
+package de.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.ScheduledTasks;
 import de.config.Configuration;
 import de.data.Flight;
 import org.slf4j.Logger;
@@ -12,28 +13,18 @@ import org.slf4j.LoggerFactory;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
 
-import static de.config.Configuration.*;
+public class FlightTrackerUtils {
 
-public class Utils {
+    private final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
-
-    public static ArrayList<Flight> getDelayFlight(int minDelay) {
+    public ArrayList<Flight> getDelayFlight(int minDelay) {
 
         try {
 
@@ -64,36 +55,7 @@ public class Utils {
         }
     }
 
-    public static void versendeEMail(String inhalt) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-
-            Properties props = new Properties();
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.host", SMTP_HOST);
-            props.put("mail.smtp.port", SMTP_PORT);
-
-            // Get the Session object.
-            Session session = Session.getInstance(props,
-                    new javax.mail.Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(SMTP_MAIL_FROM, SMTP_PASSWORD);
-                        }
-                    });
-
-            try {
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(SMTP_MAIL_FROM));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(SMTP_MAIL_TO));
-                message.setSubject("Flugverspaetung: " + dateFormat.format(new Date()));
-                message.setText(inhalt);
-                Transport.send(message);
-            } catch (Exception e) {
-                log.error("Error {}", e.getMessage());
-            }
-    }
-
-    public static Flight getFlug(JsonObject jo) {
+    public Flight getFlug(JsonObject jo) {
 
         Flight flight = new Flight();
 
@@ -105,11 +67,12 @@ public class Utils {
         flight.setAdd(cleanString(jo.get("ADD").toString()));
         flight.setAad(cleanString(jo.get("AAD").toString()));
         flight.setSad(cleanString(jo.get("SAD").toString()));
+        flight.setCgnFlight(false);
 
         return flight;
     }
 
-    public static JsonObjectBuilder getFlightObjekt(Flight flug) {
+    public JsonObjectBuilder getFlightObjekt(Flight flug) {
         JsonObjectBuilder flight = Json.createObjectBuilder();
         flight.add("FLUG", flug.getFc());
         flight.add("START", flug.getDaid());
@@ -118,7 +81,7 @@ public class Utils {
         return flight;
     }
 
-    public static String getFlightJson(ArrayList<Flight> flights){
+    public String getFlightJson(ArrayList<Flight> flights){
         JsonObjectBuilder builder = Json.createObjectBuilder();
         JsonArrayBuilder arrb = Json.createArrayBuilder();
 
@@ -132,24 +95,20 @@ public class Utils {
 
     }
 
-    public static String getFlightString(ArrayList<Flight> flights){
-        StringBuilder result = new StringBuilder();
-
-        for (Flight flight : flights) {
-            result.append("\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + flight.getSsd() + " | neu: " + flight.getAdd() + ")");
-        }
-
-        return result.toString();
+    public String getFlightString(Flight flight){
+        String flightText = "\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + getHhMm(flight.getSsd()) + " | neu: " + getHhMm(flight.getAdd()) + ")";
+        return flightText;
     }
 
-    private static String cleanString(String input) {
+    private String cleanString(String input) {
         return input.replace("\"", "").replace("[", "").replace("]", "");
     }
 
-    public static String getFullDate(String timeDouble){
-        if(timeDouble == null) return "";
+    public String getHhMm(String timeDouble){
+        if(timeDouble == null || timeDouble.length() == 0) return "";
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(Long.valueOf(timeDouble) * 1000);
     }
+
 }

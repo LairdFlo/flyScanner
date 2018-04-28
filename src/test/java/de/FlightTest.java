@@ -1,49 +1,49 @@
 package de;
 
 import de.data.Flight;
+import de.utils.CgnAirportUtils;
+import de.utils.FlightTrackerUtils;
+import de.utils.Utils;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static de.Utils.versendeEMail;
-import static de.Utils.getFlightString;
+import static de.config.Configuration.DELAY_TIME;
+import static de.utils.MailUtils.versendeEMail;
+
 
 public class FlightTest {
 
+    private FlightTrackerUtils flightTrackerUtils = new FlightTrackerUtils();
+    private CgnAirportUtils flightTrackerCgnUtils = new CgnAirportUtils();
+    private Utils utils = new Utils();
+    private ArrayList<Flight> cachDelayFlight = new ArrayList();
 
     @Test
-    public void datumTest() throws Exception {
-        Flight flight = new Flight();
-        flight.setSsd("1524520200");
-        flight.setSad("1524559800");
-        flight.setAdd("1524520200");
-        flight.setAad("1524559800");
-
-        System.out.println(flight.toString());
-
+    public void scanTest() {
+        readFlights();
+        readFlights();
     }
 
-    @Test
-    public void verschickeMail() throws Exception {
-        ArrayList<Flight> flights = new ArrayList<>();
-        flights.add(getBasicFlug());
-        flights.add(getBasicFlug());
-        flights.add(getBasicFlug());
-        String flightString = getFlightString(flights);
-        versendeEMail(flightString);
+    private void readFlights(){
+        boolean delayFlight = addFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
+        boolean delayCgnFlight = addFlight(flightTrackerCgnUtils.getCgnAirportDelay(DELAY_TIME));
+
+        if(delayFlight || delayCgnFlight){
+            versendeEMail(utils.flightTime(cachDelayFlight));
+        }
     }
 
-    private Flight getBasicFlug(){
-        Flight flight = new Flight();
-        flight.setDelay(250);
-        flight.setSad("");
-        flight.setAad("");
-        flight.setAdd("");
-        flight.setAaid("");
-        flight.setDaid("");
-        flight.setFc("");
-        flight.setSsd("");
-        flight.setUnicNumber("");
-        return flight;
+    private boolean addFlight(ArrayList<Flight> flight) {
+        boolean newDelay = false;
+        for (Flight flightNumber : flight) {
+            if (cachDelayFlight.contains(flightNumber) == false) {
+                cachDelayFlight.add(flightNumber);
+                newDelay = true;
+            }
+        }
+        return newDelay;
     }
+
+
 }
