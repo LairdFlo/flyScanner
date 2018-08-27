@@ -44,6 +44,8 @@ public class ScheduledTasks {
      * @return
      */
     private boolean addNewFlight(ArrayList<Flight> flight) {
+        if(flight == null) return false;
+
         boolean newDelay = false;
         for (Flight flightNumber : flight) {
             if (delayedFlightCache.contains(flightNumber) == false) {
