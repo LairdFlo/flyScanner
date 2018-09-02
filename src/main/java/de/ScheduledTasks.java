@@ -3,7 +3,7 @@ package de;
 import de.data.Flight;
 import de.utils.CgnAirportUtils;
 import de.utils.FlightTrackerUtils;
-import de.utils.Utils;
+import de.utils.TestAndProgUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +20,7 @@ public class ScheduledTasks {
 
     private FlightTrackerUtils flightTrackerUtils = new FlightTrackerUtils();
     private CgnAirportUtils flightTrackerCgnUtils = new CgnAirportUtils();
-    private Utils utils = new Utils();
+    private TestAndProgUtils testAndProgUtils = new TestAndProgUtils();
 
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledTasks.class);
 
@@ -34,7 +34,7 @@ public class ScheduledTasks {
         boolean delayFlight = addNewFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
 
         if(delayFlight || delayCgnFlight){
-            versendeEMail(utils.flightTime(delayedFlightCache));
+            versendeEMail(testAndProgUtils.flightTime(delayedFlightCache));
         } else {
             LOG.info("Keine neuen Verspaetungen");
         }

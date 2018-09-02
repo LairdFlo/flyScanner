@@ -8,12 +8,8 @@ import de.config.Configuration;
 import de.data.Airport;
 import de.data.Flight;
 import de.data.Quelle;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -24,7 +20,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class FlightTrackerUtils {
+public class FlightTrackerUtils extends Utils {
 
     private final Logger log = LoggerFactory.getLogger(FlightTrackerUtils.class);
 
@@ -48,15 +44,7 @@ public class FlightTrackerUtils {
                     Flight flight =  getDelyFlightFromGermany((JsonObject) jsonElement);
 
                     if (flight != null && flight.getDelay() > minDelay) {
-                        //Preisberechnung bei Eurowingsfluegen
-                        if(flight.getFc().contains("EW")){
-                            LocalDate date = LocalDate.now();
-                            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
-                            CgnAirportUtils cgnAirportUtils = new CgnAirportUtils();
-                            String delayPrice = cgnAirportUtils.getDelayPriceEurowings(flight.getDaid(), flight.getAaid(), flight.getFc(), fmt.print(date), false);
-                            flight.setPreis(delayPrice);
-                        }
-                        flights.add(flight);
+                        flights.add(addPreis(flight));
                     }
                 }
             }
@@ -88,8 +76,6 @@ public class FlightTrackerUtils {
         } else {
             return null;
         }
-
-
     }
 
     public JsonObjectBuilder getFlightObjekt(Flight flug) {
@@ -112,7 +98,6 @@ public class FlightTrackerUtils {
         builder.add("data", arrb);
 
         return builder.build().toString();
-
     }
 
     public String getFlightString(Flight flight){
@@ -130,5 +115,4 @@ public class FlightTrackerUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return dateFormat.format(Long.valueOf(timeDouble) * 1000);
     }
-
 }

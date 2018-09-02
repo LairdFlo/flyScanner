@@ -3,7 +3,7 @@ package de;
 import de.data.Flight;
 import de.utils.CgnAirportUtils;
 import de.utils.FlightTrackerUtils;
-import de.utils.Utils;
+import de.utils.TestAndProgUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class FlightTest {
 
     private FlightTrackerUtils flightTrackerUtils = new FlightTrackerUtils();
     private CgnAirportUtils flightTrackerCgnUtils = new CgnAirportUtils();
-    private Utils utils = new Utils();
+    private TestAndProgUtils testAndProgUtils = new TestAndProgUtils();
     private ArrayList<Flight> cachDelayFlight = new ArrayList();
 
     @Test
@@ -30,7 +30,7 @@ public class FlightTest {
         boolean delayFlight = addFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
 
         if(delayFlight || delayCgnFlight){
-            versendeEMail(utils.flightTime(cachDelayFlight));
+            versendeEMail(testAndProgUtils.flightTime(cachDelayFlight));
         }
     }
 

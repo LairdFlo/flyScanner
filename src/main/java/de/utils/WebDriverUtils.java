@@ -58,8 +58,11 @@ public class WebDriverUtils {
 
             String[] fluegeArray = tripDeparture.getText().split(start.toPlainString() + " " + ende);
 
-            if(fluegeArray.length == 1){
-                log.error(start.toPlainString()  + "-" + ende + ":" + tripDeparture.getText());
+            if (fluegeArray.length == 1) {
+                if (!fluegeArray[0].contains("Leider sind für die ausgewählte Flugstrecke an diesem Datum keine Flüge verfügbar.")) {
+                    log.error("getPricesForDelayedEurowings(): Keine Fluege verfuegbar bzw. nicht auswertbar \n" + start.toPlainString() + "-" + ende + ":" + tripDeparture.getText());
+                }
+
                 return null;
             }
 
