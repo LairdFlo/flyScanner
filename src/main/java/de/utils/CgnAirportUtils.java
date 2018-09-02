@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
-public class CgnAirportUtils extends Utils{
+public class CgnAirportUtils extends Utils {
 
     private static final Logger log = LoggerFactory.getLogger(CgnAirportUtils.class);
 
@@ -26,35 +26,38 @@ public class CgnAirportUtils extends Utils{
             Elements flights = doc.getElementsByClass("panel flight");
 
             //Keine Fluege gefunden
-            if(flights.size() == 0){
+            if (flights.size() == 0) {
                 log.error("Error: Keine Fluege am Airport gefunden \n" + doc);
                 return null;
             }
 
             for (int i = 0; i < flights.size(); i++) {
-                Element flightHeader = flights.get(i).getElementsByClass("row flightheader").get(0);
-                Elements div = flightHeader.children();
+                try {
+                    Element flightHeader = flights.get(i).getElementsByClass("row flightheader").get(0);
+                    Elements div = flightHeader.children();
 
-                Flight flight = new Flight();
+                    Flight flight = new Flight();
 
-                flight.setQuelle(Quelle.AIRPORT);
-                flight.setDaid(Airport.CGN);
-                flight.setAaid(div.get(0).children().get(0).getElementsByTag("span").get(0).text()); //Flugziel
-                flight.setFc(div.get(0).children().get(0).getElementsByTag("nobr").get(0).text()); // Flugnummer
+                    flight.setQuelle(Quelle.AIRPORT);
+                    flight.setDaid(Airport.CGN);
+                    flight.setAaid(div.get(0).children().get(0).getElementsByTag("span").get(0).text()); //Flugziel
+                    flight.setFc(div.get(0).children().get(0).getElementsByTag("nobr").get(0).text()); // Flugnummer
 
-                String status = div.get(1).children().get(0).children().get(0).text();
-                String zeit = div.get(1).children().get(0).children().get(1).text();
+                    String status = div.get(1).children().get(0).children().get(0).text();
+                    String zeit = div.get(1).children().get(0).children().get(1).text();
 
-                if (status.contains("verspätet")) {
+                    if (status.contains("verspätet")) {
+                        flight.setSsd(getTime(zeit, 0));
+                        flight.setAdd(getTime(zeit, 1));
 
-                    flight.setSsd(getTime(zeit, 0));
-                    flight.setAdd(getTime(zeit, 1));
+                        flight.setDelay(getVerspaetung(flight.getSsd(), flight.getAdd(), isNextDay(status)));
 
-                    flight.setDelay(getVerspaetung(flight.getSsd(), flight.getAdd(), isNextDay(status)));
-
-                    if (flight.getDelay() > delay) {
-                        flightArrayList.add(addPreis(flight));
+                        if (flight.getDelay() > delay) {
+                            flightArrayList.add(addPreis(flight));
+                        }
                     }
+                } catch (Exception e) {
+                    log.info("Hinweis {}", "Flug-Zeile nicht verarbeitet: " + e.getMessage());
                 }
             }
 

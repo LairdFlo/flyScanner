@@ -40,6 +40,7 @@ public class EurowingsUtils {
             }
             return "";
         } catch (Exception e) {
+            log.error("Error {}", e.getMessage());
             return "";
         }
     }

@@ -1,6 +1,5 @@
 package de.utils;
 
-import de.ScheduledTasks;
 import de.data.Airport;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,21 +10,25 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.config.Configuration.FIREFOX_GECKO_WINDOWS;
+import static de.config.Configuration.PHANTOMJS_LINUX;
+import static de.config.Configuration.PHANTOMJS_WINDOWS;
+
 public class WebDriverUtils {
 
     private static final Logger log = LoggerFactory.getLogger(WebDriverUtils.class);
 
     public WebDriver getPhantomDriver() {
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
-            System.setProperty("phantomjs.binary.path", System.getProperty("user.dir") + "/src/main/resources/phantomjs.exe");
+            System.setProperty("phantomjs.binary.path", PHANTOMJS_WINDOWS);
         } else {
-            System.setProperty("phantomjs.binary.path", System.getProperty("user.dir") + "/src/main/resources/phantomjs");
+            System.setProperty("phantomjs.binary.path", PHANTOMJS_LINUX);
         }
         return new PhantomJSDriver();
     }
 
     public WebDriver getFireFoxDriver() {
-        System.setProperty("webdriver.gecko.driver", System.getProperty("user.dir") + "/src/main/resources/geckodriver.exe");
+        System.setProperty("webdriver.gecko.driver", FIREFOX_GECKO_WINDOWS);
         return new FirefoxDriver();
     }
 
@@ -65,6 +68,8 @@ public class WebDriverUtils {
             if (fluegeArray.length == 1) {
                 if (!fluegeArray[0].contains("Leider sind für die ausgewählte Flugstrecke an diesem Datum keine Flüge verfügbar.")) {
                     log.error("getPricesForDelayedEurowings(): Keine Fluege verfuegbar bzw. nicht auswertbar \n" + start.toPlainString() + "-" + ende + ":" + tripDeparture.getText());
+                } else {
+                    log.error("Kein EW-Flug buchbar");
                 }
 
                 return null;
@@ -72,6 +77,7 @@ public class WebDriverUtils {
 
             return fluegeArray;
         } catch (Exception e) {
+            log.error("Error {}", e.getMessage());
             return null;
         }
     }
