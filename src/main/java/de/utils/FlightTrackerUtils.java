@@ -6,7 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.ScheduledTasks;
 import de.config.Configuration;
+import de.data.Airport;
 import de.data.Flight;
+import de.data.Quelle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +43,9 @@ public class FlightTrackerUtils {
 
                 for (JsonElement jsonElement : data) {
 
-                    Flight flight =  getFlug((JsonObject) jsonElement);
+                    Flight flight =  getDelyFlightFromGermany((JsonObject) jsonElement);
 
-                    if (flight.getDelay() > minDelay) {
+                    if (flight != null && flight.getDelay() > minDelay) {
                         flights.add(flight);
                     }
                 }
@@ -55,27 +57,35 @@ public class FlightTrackerUtils {
         }
     }
 
-    public Flight getFlug(JsonObject jo) {
+    public Flight getDelyFlightFromGermany(JsonObject jo) {
 
-        Flight flight = new Flight();
+        Airport daid = Airport.fromString(cleanString(jo.get("DAID").toString()));
 
-        flight.setDelay(jo.get("DDELAY").getAsInt());
-        flight.setFc(cleanString(jo.get("FC").toString()));
-        flight.setDaid(cleanString(jo.get("DAID").toString()));
-        flight.setAaid(cleanString(jo.get("AAID").toString()));
-        flight.setSsd(cleanString(jo.get("SDD").toString()));
-        flight.setAdd(cleanString(jo.get("ADD").toString()));
-        flight.setAad(cleanString(jo.get("AAD").toString()));
-        flight.setSad(cleanString(jo.get("SAD").toString()));
-        flight.setCgnFlight(false);
+        if(daid != Airport.UNKNOWN){
+            Flight flight = new Flight();
 
-        return flight;
+            flight.setDelay(jo.get("DDELAY").getAsInt());
+            flight.setFc(cleanString(jo.get("FC").toString()));
+            flight.setDaid(daid);
+            flight.setAaid(cleanString(jo.get("AAID").toString()));
+            flight.setSsd(cleanString(jo.get("SDD").toString()));
+            flight.setAdd(cleanString(jo.get("ADD").toString()));
+            flight.setAad(cleanString(jo.get("AAD").toString()));
+            flight.setSad(cleanString(jo.get("SAD").toString()));
+            flight.setQuelle(Quelle.APP);
+
+            return flight;
+        } else {
+            return null;
+        }
+
+
     }
 
     public JsonObjectBuilder getFlightObjekt(Flight flug) {
         JsonObjectBuilder flight = Json.createObjectBuilder();
         flight.add("FLUG", flug.getFc());
-        flight.add("START", flug.getDaid());
+        flight.add("START", flug.getDaid().toString());
         flight.add("ENDE", flug.getAaid());
         flight.add("DELAY", flug.getDelay());
         return flight;

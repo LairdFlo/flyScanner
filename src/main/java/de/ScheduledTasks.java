@@ -27,10 +27,11 @@ public class ScheduledTasks {
     private ArrayList<Flight> delayedFlightCache = new ArrayList();
 
     // Alle X Minuten (30 x 60 x 1000)
-    @Scheduled(fixedRate = 1800000)
+    @Scheduled(fixedRate = 900000)
     public void reportCurrentTime() {
-        boolean delayFlight = addNewFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
+        //Zuerst die Airport-Verspätungen einlesen und ggf. um allgemeine Verspätungen erweitern
         boolean delayCgnFlight = addNewFlight(flightTrackerCgnUtils.getCgnAirportDelay(DELAY_TIME));
+        boolean delayFlight = addNewFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
 
         if(delayFlight || delayCgnFlight){
             versendeEMail(utils.flightTime(delayedFlightCache));

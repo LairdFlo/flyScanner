@@ -2,21 +2,10 @@ package de.utils;
 
 import de.ScheduledTasks;
 import de.data.Flight;
+import de.data.Quelle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
-
-import static de.config.Configuration.*;
 
 public class Utils {
 
@@ -29,7 +18,7 @@ public class Utils {
         String flightText = "";
 
         for (Flight flight : flights) {
-            if (flight.isCgnFlight()) {
+            if (flight.getQuelle() == Quelle.AIRPORT) {
                 flightText += flightTrackerCgnUtils.getFlightStringCgnAirport(flight);
             } else {
                 flightText += flightTrackerUtils.getFlightString(flight);

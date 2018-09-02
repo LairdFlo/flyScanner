@@ -26,8 +26,8 @@ public class FlightTest {
     }
 
     private void readFlights(){
-        boolean delayFlight = addFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
         boolean delayCgnFlight = addFlight(flightTrackerCgnUtils.getCgnAirportDelay(DELAY_TIME));
+        boolean delayFlight = addFlight(flightTrackerUtils.getDelayFlight(DELAY_TIME));
 
         if(delayFlight || delayCgnFlight){
             versendeEMail(utils.flightTime(cachDelayFlight));
@@ -44,6 +44,4 @@ public class FlightTest {
         }
         return newDelay;
     }
-
-
 }

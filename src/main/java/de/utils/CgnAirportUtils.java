@@ -2,7 +2,9 @@ package de.utils;
 
 
 import de.ScheduledTasks;
+import de.data.Airport;
 import de.data.Flight;
+import de.data.Quelle;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,8 +33,8 @@ public class CgnAirportUtils {
 
                 Flight flight = new Flight();
 
-                flight.setCgnFlight(true);
-                flight.setDaid("CGN");
+                flight.setQuelle(Quelle.AIRPORT);
+                flight.setDaid(Airport.CGN);
                 flight.setAaid(div.get(0).children().get(0).getElementsByTag("span").get(0).text()); //Flugziel
                 flight.setFc(div.get(0).children().get(0).getElementsByTag("nobr").get(0).text()); // Flugnummer
 
