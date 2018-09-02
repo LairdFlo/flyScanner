@@ -37,6 +37,9 @@ public class Flight {
     //Herkunft
     private Quelle quelle;
 
+    //Preis
+    private String preis = "";
+
     public String getUnicNumber() {
         return unicNumber;
     }
@@ -117,6 +120,14 @@ public class Flight {
         this.quelle = quelle;
     }
 
+    public String getPreis() {
+        return preis;
+    }
+
+    public void setPreis(String preis) {
+        this.preis = preis;
+    }
+
     @Override
     public String toString() {
         return "Flight{" +
@@ -130,6 +141,7 @@ public class Flight {
                 ", aad='" + aad + '\'' +
                 ", sad='" + sad + '\'' +
                 ", quelle=" + quelle +
+                ", preis='" + preis + '\'' +
                 '}';
     }
 

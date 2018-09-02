@@ -35,6 +35,8 @@ public class FlightTest {
     }
 
     private boolean addFlight(ArrayList<Flight> flight) {
+        if(flight == null) return false;
+
         boolean newDelay = false;
         for (Flight flightNumber : flight) {
             if (cachDelayFlight.contains(flightNumber) == false) {

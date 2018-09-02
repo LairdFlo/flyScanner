@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.ScheduledTasks;
 import de.config.Configuration;
 import de.data.Airport;
 import de.data.Flight;
 import de.data.Quelle;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 
 public class FlightTrackerUtils {
 
-    private final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+    private final Logger log = LoggerFactory.getLogger(FlightTrackerUtils.class);
 
     public ArrayList<Flight> getDelayFlight(int minDelay) {
 
@@ -46,6 +48,14 @@ public class FlightTrackerUtils {
                     Flight flight =  getDelyFlightFromGermany((JsonObject) jsonElement);
 
                     if (flight != null && flight.getDelay() > minDelay) {
+                        //Preisberechnung bei Eurowingsfluegen
+                        if(flight.getFc().contains("EW")){
+                            LocalDate date = LocalDate.now();
+                            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
+                            CgnAirportUtils cgnAirportUtils = new CgnAirportUtils();
+                            String delayPrice = cgnAirportUtils.getDelayPriceEurowings(flight.getDaid(), flight.getAaid(), flight.getFc(), fmt.print(date), false);
+                            flight.setPreis(delayPrice);
+                        }
                         flights.add(flight);
                     }
                 }
