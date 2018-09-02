@@ -16,7 +16,11 @@ public class WebDriverUtils {
     private static final Logger log = LoggerFactory.getLogger(WebDriverUtils.class);
 
     public WebDriver getPhantomDriver() {
-        System.setProperty("phantomjs.binary.path", System.getProperty("user.dir") + "/src/main/resources/phantomjs.exe");
+        if(System.getProperty("os.name").toLowerCase().contains("windows")){
+            System.setProperty("phantomjs.binary.path", System.getProperty("user.dir") + "/src/main/resources/phantomjs.exe");
+        } else {
+            System.setProperty("phantomjs.binary.path", System.getProperty("user.dir") + "/src/main/resources/phantomjs");
+        }
         return new PhantomJSDriver();
     }
 
