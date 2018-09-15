@@ -50,7 +50,7 @@ public class CgnAirportUtils extends Utils {
                         flight.setSsd(getTime(zeit, 0));
                         flight.setAdd(getTime(zeit, 1));
 
-                        flight.setDelay(getVerspaetung(flight.getSsd(), flight.getAdd(), isNextDay(status)));
+                        flight = setVerspaetung(flight, zeit);
 
                         if (flight.getDelay() > delay) {
                             flightArrayList.add(addPreis(flight));
@@ -113,11 +113,14 @@ public class CgnAirportUtils extends Utils {
         return flightText;
     }
 
-    private int getVerspaetung(String abflugAlt, String abflugNeu, boolean isNextDayFlight) {
+    private Flight setVerspaetung(Flight flight, String flightString) {
+        String abflugAlt = flight.getSsd();
+        String abflugNeu = flight.getAdd();
+
         DateTime planFlugzeit = new DateTime();
         DateTime neueFlugzeit = new DateTime();
 
-        if (isNextDayFlight) {
+        if (isNextDay(flightString)) {
             planFlugzeit = planFlugzeit.minusDays(1);
         }
 
@@ -128,7 +131,9 @@ public class CgnAirportUtils extends Utils {
         neueFlugzeit = neueFlugzeit.withMinuteOfHour(getMinutesFromString(abflugNeu));
 
         Minutes minutes = Minutes.minutesBetween(planFlugzeit, neueFlugzeit);
-        return minutes.getMinutes();
 
+        flight.setDelay(minutes.getMinutes());
+
+        return flight;
     }
 }

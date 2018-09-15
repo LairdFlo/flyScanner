@@ -1,5 +1,7 @@
 package de.data;
 
+import org.joda.time.DateTime;
+
 import java.util.Objects;
 
 public class Flight {
@@ -24,9 +26,11 @@ public class Flight {
 
     // Abflug Plan
     private String ssd;
+    private DateTime planFlugzeit;
 
     // Abflug Tatsächlich
     private String add;
+    private DateTime neueFlugzeit;
 
     //Ankunft Plan
     private String aad;
@@ -128,6 +132,22 @@ public class Flight {
         this.preis = preis;
     }
 
+    public DateTime getPlanFlugzeit() {
+        return planFlugzeit;
+    }
+
+    public void setPlanFlugzeit(DateTime planFlugzeit) {
+        this.planFlugzeit = planFlugzeit;
+    }
+
+    public DateTime getNeueFlugzeit() {
+        return neueFlugzeit;
+    }
+
+    public void setNeueFlugzeit(DateTime neueFlugzeit) {
+        this.neueFlugzeit = neueFlugzeit;
+    }
+
     @Override
     public String toString() {
         return "Flight{" +
@@ -137,7 +157,9 @@ public class Flight {
                 ", daid=" + daid +
                 ", aaid='" + aaid + '\'' +
                 ", ssd='" + ssd + '\'' +
+                ", planFlugzeit=" + planFlugzeit +
                 ", add='" + add + '\'' +
+                ", neueFlugzeit=" + neueFlugzeit +
                 ", aad='" + aad + '\'' +
                 ", sad='" + sad + '\'' +
                 ", quelle=" + quelle +
