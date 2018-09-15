@@ -3,9 +3,11 @@ package de.utils;
 import de.ScheduledTasks;
 import de.data.Flight;
 import de.data.Quelle;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TestAndProgUtils {
 
@@ -18,11 +20,16 @@ public class TestAndProgUtils {
         String flightText = "";
 
         for (Flight flight : flights) {
-            if (flight.getQuelle() == Quelle.AIRPORT) {
-                flightText += flightTrackerCgnUtils.getFlightStringCgnAirport(flight);
-            } else {
-                flightText += flightTrackerUtils.getFlightString(flight);
+            //Nur zukünftige Flüge anzeigen
+            DateTime now = new DateTime();
+            if(now.isAfter(flight.getPlanAbflugFlugzeit())){
+                if (flight.getQuelle() == Quelle.AIRPORT) {
+                    flightText += flightTrackerCgnUtils.getFlightStringCgnAirport(flight);
+                } else {
+                    flightText += flightTrackerUtils.getFlightString(flight);
+                }
             }
+
         }
         return flightText;
     }

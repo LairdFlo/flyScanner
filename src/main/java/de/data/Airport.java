@@ -51,7 +51,6 @@ public enum Airport {
         this.longName = longName;
     }
 
-    @Override
     public String toString() {
         return shortName;
     }

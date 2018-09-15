@@ -11,6 +11,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class CgnAirportUtils extends Utils {
@@ -47,9 +49,6 @@ public class CgnAirportUtils extends Utils {
                     String zeit = div.get(1).children().get(0).children().get(1).text();
 
                     if (status.contains("verspätet")) {
-                        flight.setSsd(getTime(zeit, 0));
-                        flight.setAdd(getTime(zeit, 1));
-
                         flight = setVerspaetung(flight, zeit);
 
                         if (flight.getDelay() > delay) {
@@ -109,13 +108,13 @@ public class CgnAirportUtils extends Utils {
     }
 
     public String getFlightStringCgnAirport(Flight flight) {
-        String flightText = "\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + flight.getSsd() + " | neu: " + flight.getAdd() + ")";
+        String flightText = "\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + getHhMm(flight.getPlanAbflugFlugzeit()) + " | neu: " + getHhMm(flight.getNeueAbflugFlugzeit()) + ")";
         return flightText;
     }
 
     private Flight setVerspaetung(Flight flight, String flightString) {
-        String abflugAlt = flight.getSsd();
-        String abflugNeu = flight.getAdd();
+        String abflugAlt = getTime(flightString, 0);
+        String abflugNeu = getTime(flightString, 1);
 
         DateTime planFlugzeit = new DateTime();
         DateTime neueFlugzeit = new DateTime();
@@ -132,8 +131,17 @@ public class CgnAirportUtils extends Utils {
 
         Minutes minutes = Minutes.minutesBetween(planFlugzeit, neueFlugzeit);
 
+        flight.setPlanAbflugFlugzeit(planFlugzeit);
+        flight.setNeueAbflugFlugzeit(neueFlugzeit);
         flight.setDelay(minutes.getMinutes());
 
         return flight;
+    }
+
+    public String getHhMm(DateTime time){
+        if(time == null) return "";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        return dateFormat.format(time.toDate());
     }
 }

@@ -8,6 +8,7 @@ import de.config.Configuration;
 import de.data.Airport;
 import de.data.Flight;
 import de.data.Quelle;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.json.Json;
@@ -66,10 +67,15 @@ public class FlightTrackerUtils extends Utils {
             flight.setFc(cleanString(jo.get("FC").toString()));
             flight.setDaid(daid);
             flight.setAaid(cleanString(jo.get("AAID").toString()));
-            flight.setSsd(cleanString(jo.get("SDD").toString()));
-            flight.setAdd(cleanString(jo.get("ADD").toString()));
             flight.setAad(cleanString(jo.get("AAD").toString()));
             flight.setSad(cleanString(jo.get("SAD").toString()));
+
+            DateTime planAbflugFlugzeit = new DateTime(Long.valueOf(cleanString(jo.get("SDD").toString())) * 1000);
+            DateTime neueAbflugFlugzeit = new DateTime(Long.valueOf(cleanString(jo.get("ADD").toString())) * 1000);
+
+            flight.setPlanAbflugFlugzeit(planAbflugFlugzeit);
+            flight.setNeueAbflugFlugzeit(neueAbflugFlugzeit);
+
             flight.setQuelle(Quelle.APP);
 
             return flight;
@@ -101,7 +107,7 @@ public class FlightTrackerUtils extends Utils {
     }
 
     public String getFlightString(Flight flight){
-        String flightText = "\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + getHhMm(flight.getSsd()) + " | neu: " + getHhMm(flight.getAdd()) + ")";
+        String flightText = "\n" + flight.getFc() + " von " + flight.getDaid() + " nach " + flight.getAaid() + " " + flight.getDelay() + " Minuten (alt: " + getHhMm(flight.getPlanAbflugFlugzeit()) + " | neu: " + getHhMm(flight.getNeueAbflugFlugzeit()) + ")";
         return flightText;
     }
 
@@ -109,10 +115,10 @@ public class FlightTrackerUtils extends Utils {
         return input.replace("\"", "").replace("[", "").replace("]", "");
     }
 
-    public String getHhMm(String timeDouble){
-        if(timeDouble == null || timeDouble.length() == 0) return "";
+    public String getHhMm(DateTime time){
+        if(time == null) return "";
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        return dateFormat.format(Long.valueOf(timeDouble) * 1000);
+        return dateFormat.format(time.toDate());
     }
 }

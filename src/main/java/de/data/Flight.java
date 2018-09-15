@@ -25,12 +25,10 @@ public class Flight {
     private String aaid;
 
     // Abflug Plan
-    private String ssd;
-    private DateTime planFlugzeit;
+    private DateTime planAbflugFlugzeit;
 
     // Abflug Tatsächlich
-    private String add;
-    private DateTime neueFlugzeit;
+    private DateTime neueAbflugFlugzeit;
 
     //Ankunft Plan
     private String aad;
@@ -84,22 +82,6 @@ public class Flight {
         this.aaid = aaid;
     }
 
-    public String getSsd() {
-        return ssd;
-    }
-
-    public void setSsd(String ssd) {
-        this.ssd = ssd;
-    }
-
-    public String getAdd() {
-        return add;
-    }
-
-    public void setAdd(String add) {
-        this.add = add;
-    }
-
     public String getAad() {
         return aad;
     }
@@ -132,20 +114,20 @@ public class Flight {
         this.preis = preis;
     }
 
-    public DateTime getPlanFlugzeit() {
-        return planFlugzeit;
+    public DateTime getPlanAbflugFlugzeit() {
+        return planAbflugFlugzeit;
     }
 
-    public void setPlanFlugzeit(DateTime planFlugzeit) {
-        this.planFlugzeit = planFlugzeit;
+    public void setPlanAbflugFlugzeit(DateTime planAbflugFlugzeit) {
+        this.planAbflugFlugzeit = planAbflugFlugzeit;
     }
 
-    public DateTime getNeueFlugzeit() {
-        return neueFlugzeit;
+    public DateTime getNeueAbflugFlugzeit() {
+        return neueAbflugFlugzeit;
     }
 
-    public void setNeueFlugzeit(DateTime neueFlugzeit) {
-        this.neueFlugzeit = neueFlugzeit;
+    public void setNeueAbflugFlugzeit(DateTime neueAbflugFlugzeit) {
+        this.neueAbflugFlugzeit = neueAbflugFlugzeit;
     }
 
     @Override
@@ -156,10 +138,8 @@ public class Flight {
                 ", delay=" + delay +
                 ", daid=" + daid +
                 ", aaid='" + aaid + '\'' +
-                ", ssd='" + ssd + '\'' +
-                ", planFlugzeit=" + planFlugzeit +
-                ", add='" + add + '\'' +
-                ", neueFlugzeit=" + neueFlugzeit +
+                ", planAbflugFlugzeit=" + planAbflugFlugzeit +
+                ", neueAbflugFlugzeit=" + neueAbflugFlugzeit +
                 ", aad='" + aad + '\'' +
                 ", sad='" + sad + '\'' +
                 ", quelle=" + quelle +
