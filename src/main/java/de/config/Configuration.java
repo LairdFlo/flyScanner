@@ -26,4 +26,9 @@ public class Configuration {
             DUS_AIRPORT,
             EUROWINGS_FLIGHTS
     };
+
+    public static String[] NEGATIV_AIRLINE = {
+            "FR",
+            "OE"
+    };
 }

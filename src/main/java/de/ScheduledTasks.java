@@ -45,7 +45,7 @@ public class ScheduledTasks {
      * @return
      */
     private boolean addNewFlight(ArrayList<Flight> flight) {
-        if(flight == null) return false;
+        if(flight == null || flight.isEmpty()) return false;
 
         boolean newDelay = false;
         for (Flight flightNumber : flight) {

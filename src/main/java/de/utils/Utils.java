@@ -9,15 +9,17 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Utils extends EurowingsUtils{
+import static de.config.Configuration.NEGATIV_AIRLINE;
+
+public class Utils extends EurowingsUtils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    protected Flight addPreis(final Flight flight){
+    protected Flight addPreis(final Flight flight) {
         Flight copyFlight = flight;
 
         //Preisberechnung bei Eurowingsfluegen
-        if(copyFlight.getFc().contains("EW") && Configuration.CALC_EW_PRICE){
+        if (copyFlight.getFc().contains("EW") && Configuration.CALC_EW_PRICE) {
             LocalDate date = LocalDate.now();
             DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
             String delayPrice = getDelayPriceEurowings(Airport.CGN, copyFlight.getAaid(), copyFlight.getFc(), fmt.print(date), false);
@@ -29,6 +31,7 @@ public class Utils extends EurowingsUtils{
 
     /**
      * Minuten aus dem Format XX:10 ermitteln
+     *
      * @param value
      * @return
      */
@@ -39,6 +42,7 @@ public class Utils extends EurowingsUtils{
 
     /**
      * Stunden aus dem Format 20:XX ermitteln
+     *
      * @param value
      * @return
      */
@@ -47,4 +51,18 @@ public class Utils extends EurowingsUtils{
         return stunden;
     }
 
+    /**
+     * Nur von diesen Airlines sollen Verspaetungen verarbeitet werden
+     *
+     * @return
+     */
+    protected boolean isPositivAirline(String fc) {
+
+        for (String airline : NEGATIV_AIRLINE) {
+            if(fc.contains(airline)){
+                return false;
+            }
+        }
+        return true;
+    }
 }

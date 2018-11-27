@@ -44,7 +44,7 @@ public class FlightTrackerUtils extends Utils {
 
                     Flight flight =  getDelyFlightFromGermany((JsonObject) jsonElement);
 
-                    if (flight != null && flight.getDelay() > minDelay) {
+                    if (flight != null && flight.getDelay() > minDelay && isPositivAirline(flight.getFc())) {
                         flights.add(addPreis(flight));
                     }
                 }
