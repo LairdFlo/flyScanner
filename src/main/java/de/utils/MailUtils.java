@@ -21,6 +21,8 @@ public class MailUtils {
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
     public static void versendeEMail(String inhalt) {
+        if(inhalt.isEmpty()) return;
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
             Properties props = new Properties();

@@ -2,7 +2,6 @@ package de.utils;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -22,17 +21,17 @@ public class AirlineWhiteBlacklistTest {
     @Test
     public void isNegativAirlineOe(){
         String airline = "OE2346";
-        boolean positivAirline = utils.isPositivAirline(airline);
+        boolean negativAirline = utils.isPositivAirline(airline);
 
-        assertFalse(positivAirline);
+        assertFalse(negativAirline);
     }
 
     @Test
     public void isNegativAirlineFr(){
         String airline = "FR5126";
-        boolean positivAirline = utils.isPositivAirline(airline);
+        boolean negativAirline = utils.isPositivAirline(airline);
 
-        assertFalse(positivAirline);
+        assertFalse(negativAirline);
     }
 
 }

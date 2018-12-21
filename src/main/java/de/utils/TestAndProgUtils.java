@@ -21,8 +21,7 @@ public class TestAndProgUtils {
 
         for (Flight flight : flights) {
             //Nur zukünftige Flüge anzeigen
-            DateTime now = new DateTime();
-            if(now.isAfter(flight.getPlanAbflugFlugzeit())){
+            if(isFutureFlight(flight.getPlanAbflugFlugzeit())){
                 if (flight.getQuelle() == Quelle.AIRPORT) {
                     flightText += flightTrackerCgnUtils.getFlightStringCgnAirport(flight);
                 } else {
@@ -34,4 +33,9 @@ public class TestAndProgUtils {
         return flightText;
     }
 
+    public boolean isFutureFlight(DateTime flightTime){
+        DateTime now = new DateTime();
+        boolean isAfter = now.getMillis() < flightTime.getMillis();
+        return isAfter;
+    }
 }
